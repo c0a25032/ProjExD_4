@@ -141,7 +141,7 @@ class Beam(pg.sprite.Sprite):
     """
     ビームに関するクラス
     """
-    def __init__(self, bird: Bird):
+    def __init__(self, bird: Bird, angle0: int = 0):
         """
         ビーム画像Surfaceを生成する
         引数 bird：ビームを放つこうかとん
@@ -165,6 +165,25 @@ class Beam(pg.sprite.Sprite):
         self.rect.move_ip(self.speed*self.vx, self.speed*self.vy)
         if check_bound(self.rect) != (True, True):
             self.kill()
+
+class NeoBeam:
+    """
+    複数方向にビームを生成するクラス
+    """
+    def __init__(self, bird: Bird, num: int):
+        self.bird = bird # ビームを発射するこうかとん
+        self.num = num # 生成するビーム数
+    def gen_beams(self) -> list[Beam]:
+        """
+        -50度から+50度の範囲で複数のBeamを生成する
+        """
+        beam_lst = [] # 生成したビームを格納するリスト
+        step = 100 // (self.num - 1) # ビーム同士の角度差
+
+        for angle in range(-50, 51, step):
+            beam_lst.append(Beam(self.bird, angle)) # 指定角度のビームを生成してリストに追加
+
+        return beam_lst
 
 
 class Explosion(pg.sprite.Sprite):
