@@ -242,6 +242,41 @@ class Score:
         screen.blit(self.image, self.rect)
 
 
+class Shield(pg.sprite.Sprite):
+    """
+    こうかとんの前に防御壁を出すクラス
+    """
+    def __init__(self, bird: Bird, life: int = 400):
+        super().__init__()
+        self.life = life
+
+        # 防御壁の画像を作る
+        self.image = pg.Surface((20, bird.rect.height * 2), pg.SRCALPHA)
+        pg.draw.rect(
+            self.image,
+            (0, 0, 255),
+            (0, 0, 20, bird.rect.height * 2)
+        )
+
+        # こうかとんの向きに合わせて回転
+        vx, vy = bird.dire
+        angle = math.degrees(math.atan2(-vy, vx))
+        self.image = pg.transform.rotate(self.image, angle)
+
+        self.rect = self.image.get_rect()
+
+        # こうかとんの前に配置
+        self.rect.center = (
+            bird.rect.centerx + vx * bird.rect.width,
+            bird.rect.centery + vy * bird.rect.height
+        )
+
+    def update(self):
+        self.life -= 1
+        if self.life < 0:
+            self.kill()
+
+
 def main():
     pg.display.set_caption("真！こうかとん無双")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
